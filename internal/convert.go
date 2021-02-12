@@ -46,9 +46,10 @@ func (c *Converter) Convert(note *enex.Note) (*markdown.Note, error) {
 	c.normalizeHTML(note, md, NewReplacerMedia(md.Media), &Code{}, &ExtraDiv{}, &TextFormatter{})
 	c.toMarkdown(note, md)
 	c.prependTags(note, md)
+	c.addDates(note, md)
+	c.prependDates(note, md)
 	c.prependTitle(note, md)
 	c.trimSpaces(note, md)
-	c.addDates(note, md)
 
 	return md, c.err
 }
@@ -127,6 +128,15 @@ func (c *Converter) addDates(note *enex.Note, md *markdown.Note) {
 
 	md.CTime = convertEvernoteDate(note.Created)
 	md.MTime = convertEvernoteDate(note.Updated)
+}
+
+func (c *Converter) prependDates(note *enex.Note, md *markdown.Note) {
+	if c.err != nil {
+		return
+	}
+
+	md.Content = append([]byte(fmt.Sprintf("Updated: %s\n\n", md.MTime)), md.Content...)
+	md.Content = append([]byte(fmt.Sprintf("Created: %s\n", md.CTime)), md.Content...)
 }
 
 const evernoteDateFormat = "20060102T150405Z"
