@@ -135,8 +135,10 @@ func (c *Converter) prependDates(note *enex.Note, md *markdown.Note) {
 		return
 	}
 
-	md.Content = append([]byte(fmt.Sprintf("Updated: %s\n\n", md.MTime)), md.Content...)
-	md.Content = append([]byte(fmt.Sprintf("Created: %s\n", md.CTime)), md.Content...)
+	loc, _ := time.LoadLocation("Asia/Seoul")
+
+	md.Content = append([]byte(fmt.Sprintf("Updated: %s\n\n", md.MTime.In(loc))), md.Content...)
+	md.Content = append([]byte(fmt.Sprintf("Created: %s\n", md.CTime.In(loc))), md.Content...)
 }
 
 const evernoteDateFormat = "20060102T150405Z"
